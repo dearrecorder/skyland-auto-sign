@@ -22,7 +22,7 @@
 
 [视频用法]( https://www.bilibili.com/video/BV1DP411h7s6)
 
-<a id="mode1"></a>
+<a name="mode1"></a>
 
 ## 方法1
 
@@ -52,7 +52,7 @@
 
 最后再次启动的时候，脚本就不会再询问你是否添加账号了，而是直接帮你签到了
 
-<a id="maa"></a>
+<a name="maa"></a>
 
 ### MAA支持
 
@@ -72,7 +72,7 @@ MAA在连接设置里有运行前脚本，输入`skyland.py`的路径后，每�
 TOKEN和日志应该都会被存储在MAA根路径下
 ![img_6.png](assets/img_6.png)
 
-<a id="mode2"></a>
+<a name="mode2"></a>
 
 ## 方法2
 
@@ -130,14 +130,14 @@ TOKEN和日志应该都会被存储在MAA根路径下
 
 注意：如果森空岛登录失效，则可能需要重新配置你的鹰角网络通行证！
 
-<a id="mobile"></a>
+<a name="mobile"></a>
 
 ### 使用手机操作
 
 //TODO
 
 
-<a id="mode3"></a>
+<a name="mode3"></a>
 
 ## 方法3
 
@@ -183,7 +183,7 @@ TOKEN和日志应该都会被存储在MAA根路径下
 多个账号的运行结果（图里有重复token，虽然说读到4个但所以实际只有两个）：
 ![图片](https://github.com/xxyz30/skyland-auto-sign/assets/81208875/0ae92ef9-1b4a-4613-ab2f-9363edfbb166)
 
-<a id="multiple_account"></a>
+<a name="multiple_account"></a>
 
 ## 多账号支持
 
@@ -199,7 +199,7 @@ TOKEN和日志应该都会被存储在MAA根路径下
 ![img_20.png](assets/img_20.png)
 ![img_21.png](assets/img_21.png)
 
-<a id="multiple_account"></a>
+<a name="multiple_account"></a>
 
 ## 多端登录的问题
 
