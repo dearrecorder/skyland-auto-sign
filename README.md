@@ -10,17 +10,20 @@
 > 3.使用Github Actions托管（相比云函数来讲非常推荐，因为有日志会存储，而且也免费）
 
 ## 快速导航
+
 - [在自己电脑上运行](#mode1)
-  - [配合MAA运行](#maa)
+    - [配合MAA运行](#maa)
 - [在云函数上运行](#mode2)
+-
+    - [使用手机进行操作](#mobile)
 - [使用Github Actions托管](#mode3)
 - [多账号支持](#multiple_account)
 - [多端登录问题](#multiple_login)
 
-
 [视频用法]( https://www.bilibili.com/video/BV1DP411h7s6)
 
 <a id="mode1"></a>
+
 ## 方法1
 
 1.先装python（3.6及以上）且安装requests库.cmd 运行`pip install requests`
@@ -28,9 +31,9 @@
 2.下载脚本`skyland.py`
 
 3.双击本文件（弹出一个黑框框代表你成功了）
-![图片](https://github.com/xxyz30/skyland-auto-sign/assets/81208875/cd67b87f-75f2-46c4-b55f-82721e97c9bb)
+![img.png](assets/img_0.png)
 
-（以上3步可以用我打好的exe文件直接运行，链接见release或者[百度网盘](https://pan.baidu.com/s/1RPi6JyA3iUUv5ubNsoyqIw?pwd=wn4e)（就10m下载很快的））
+（以上3步可以用我打好的exe文件直接运行，链接见[release](https://gitee.com/FancyCabbage/skyland-auto-sign/releases)
 
 4.本软件有3种模式：
 
@@ -41,14 +44,16 @@
 如果第一种模式和第二种模式你都没法过人机验证的话，可以使用第三种模式：
 
 登录电脑的森空岛[官网](https://www.skland.com/)
-![图片](https://github.com/xxyz30/skyland-auto-sign/assets/81208875/641796be-46c9-4bf3-bb8b-12fdc9e663a4)
+![img.png](assets/img.png)
 
 登录完成后，访问[这个网址](https://web-api.skland.com/account/info/hg)。然后复制这里的所有内容，粘贴进去即可。
-![图片](https://github.com/xxyz30/skyland-auto-sign/assets/81208875/4176e197-93f4-45fa-b972-1e2737c32a0f)
+![img_1.png](assets/img_1.png)
+![img_2.png](assets/img_2.png)
 
 最后再次启动的时候，脚本就不会再询问你是否添加账号了，而是直接帮你签到了
 
 <a id="maa"></a>
+
 ### MAA支持
 
 可以使用MAA自动执行脚本
@@ -56,20 +61,19 @@
 MAA在连接设置里有运行前脚本，输入`skyland.py`的路径后，每次连接模拟器时会自动帮你签到。
 
 如果你用的exe版本的，请输入`skyland.exe`的路径！
-![图片](https://github.com/xxyz30/skyland-auto-sign/assets/81208875/36e5583d-a923-4681-a5dd-3ac8370fcd87)
+![img_3.png](assets/img_3.png)
 
 第一次执行的话应该还是会出现这个东西
-![图片](https://github.com/xxyz30/skyland-auto-sign/assets/81208875/68cdceb5-9596-48d4-9973-8bfbc9fdef84)
+![img_4.png](assets/img_4.png)
 
 设置完毕后直接应该会执行完成，以后都会这样
-![图片](https://github.com/xxyz30/skyland-auto-sign/assets/81208875/ed4fad78-9e2a-4e2d-93f9-0e363baf817c)
+![img_5.png](assets/img_5.png)
 
 TOKEN和日志应该都会被存储在MAA根路径下
-![图片](https://github.com/xxyz30/skyland-auto-sign/assets/81208875/b7f61fcf-8b72-4d00-aad3-fee2c80ff38f)
-
-
+![img_6.png](assets/img_6.png)
 
 <a id="mode2"></a>
+
 ## 方法2
 
 使用华为云挂载服务器签到（华为云有每月免费额度）
@@ -77,59 +81,67 @@ TOKEN和日志应该都会被存储在MAA根路径下
 在`cloud_functions`文件夹下的代码是华为云的适配好的代码。
 
 1.首先注册登录华为云账号
-![图片](https://github.com/xxyz30/skyland-auto-sign/assets/81208875/a8466b1e-25cd-4cec-8227-d675defcd5bd)
+![img_7.png](assets/img_7.png)
 
 2.注册且登录完成后，进入[这个网址](https://console.huaweicloud.com/functiongraph)
 
 3.进入后可能要求你实名认证，实名认证一下即可。
 
 4.完成后点击右上角的'创建函数'按钮
-![图片](https://github.com/xxyz30/skyland-auto-sign/assets/81208875/b6aa83e0-2d54-4366-8b60-b7b3e8fdbc0f)
+![img_8.png](assets/img_8.png)
 
 5.进入选择运行时环境为`Python 3.10`， 并填一下脚本名称（随便填）。其它设置不用动
-![图片](https://github.com/xxyz30/skyland-auto-sign/assets/81208875/e816158f-e1e3-47e5-959c-148ca2f5f259)
+![img_9.png](assets/img_9.png)
 
 6.进来后是这样的界面，点击右上角上传自zip文件（或者你在左边的编辑器里自己把文件一个个创建好复制粘贴进去也行）
-![图片](https://github.com/xxyz30/skyland-auto-sign/assets/81208875/fc813308-bd30-4e94-b5b4-0c35f7e62d1d)
+![img_10.png](assets/img_10.png)
 
 7.上传
-![图片](https://github.com/xxyz30/skyland-auto-sign/assets/81208875/2398932d-09f6-47e2-8694-48570724f6e9)
+![img_11.png](assets/img_11.png)
 
 8.上传完成后应该是这个样子的
-![图片](https://github.com/xxyz30/skyland-auto-sign/assets/81208875/e357cbb9-47aa-4079-9d0b-b94caf925bbe)
+![img_12.png](assets/img_12.png)
 
 9.选中`INPUT_HYPERGRYPH_TOKEN.txt`，在右边添加你的鹰角通行证.支持多个，换行添加下一个即可。
-![图片](https://github.com/xxyz30/skyland-auto-sign/assets/81208875/e6e92eb8-fc00-4a50-be72-7d8cb571930d)
+![img_13.png](assets/img_13.png)
 
 10.保存完毕后，可以点击测试测试一下脚本。创建测试这里直接点击创建即可
-![图片](https://github.com/xxyz30/skyland-auto-sign/assets/81208875/61d2f18e-cf68-4a07-b4c4-c82ddf63022c)
-![图片](https://github.com/xxyz30/skyland-auto-sign/assets/81208875/648a0035-e1c1-40eb-ae94-9614605c9379)
+![img_14.png](assets/img_14.png)
 
 11.正常结束后是这个样子的（记得保存和部署）：
-![图片](https://github.com/xxyz30/skyland-auto-sign/assets/81208875/9e93ed91-7527-4edc-830b-f4cd45aeb3ef)
+![img_15.png](assets/img_15.png)
 
 12.为了让脚本每天执行，我们需要创建一个触发器
-![图片](https://github.com/xxyz30/skyland-auto-sign/assets/81208875/dcccce9c-d6f6-4fc7-a2e3-f8565d5a2d71)
+![img_16.png](assets/img_16.png)
 
 触发器类型请选择`定时触发器`
-![图片](https://github.com/xxyz30/skyland-auto-sign/assets/81208875/4e60bf81-8ec2-4423-b68b-444435dd0edc)
+![img_17.png](assets/img_17.png)
 
 触发器类型选择`Cron表达式`
-![图片](https://github.com/xxyz30/skyland-auto-sign/assets/81208875/25ae6a8d-247f-489b-b924-d4f8b26f559c)
+![img_18.png](assets/img_18.png)
 
 然后填入这串东西`0 1 1 * * ?`
 它指的是每天凌晨1点01分会执行一次
-![图片](https://github.com/xxyz30/skyland-auto-sign/assets/81208875/815335fc-b810-4321-b25a-2052e23e06f1)
+![img_19.png](assets/img_19.png)
 
 然后确定保存即可
 
 最后大功告成，等着每天发奖励即可！
 
-注意：如果森空岛登录失效，则可能需要重新配置cred！
+注意：如果森空岛登录失效，则可能需要重新配置你的鹰角网络通行证！
+
+<a id="mobile"></a>
+
+### 使用手机操作
+
+//TODO
 
 
 <a id="mode3"></a>
+
 ## 方法3
+
+本方法需要你有一定的git使用经验 //TODO
 
 使用Github Action自动运行脚本
 
@@ -184,9 +196,8 @@ TOKEN和日志应该都会被存储在MAA根路径下
 **不要去登出账号，否则鹰角网络通行证会失效！**
 
 如果要添加多个账号，请删除浏览器缓存。或者使用浏览器自带的隐私浏览模式，拿到Token后，关闭隐私窗口，再登录一次即可！
-
-![图片](https://github.com/xxyz30/skyland-auto-sign/assets/81208875/bc9f9ab5-fc90-4724-b877-d470b3494180)
-![图片](https://github.com/xxyz30/skyland-auto-sign/assets/81208875/5889969c-3b25-4f6e-b4a2-0d5b923771d0)
+![img_20.png](assets/img_20.png)
+![img_21.png](assets/img_21.png)
 
 <a id="multiple_account"></a>
 
