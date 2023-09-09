@@ -9,7 +9,7 @@ from datetime import date
 
 token_save_name = 'TOKEN.txt'
 app_code = '4ca99fa6b56cc2ba'
-token_env = os.environ.get('HYPERGRYPH_TOKEN')
+token_env = os.environ.get('TOKEN')
 header = {
     'cred': '',
     'User-Agent': 'Skland/1.0.1 (com.hypergryph.skland; build:100001014; Android 31; ) Okhttp/4.11.0',
@@ -125,11 +125,14 @@ def get_token(resp):
 
 
 def get_grant_code(token):
-    resp = requests.post(grant_code_url, json={
+    response = requests.post(grant_code_url, json={
         'appCode': app_code,
         'token': token,
         'type': 0
-    }, headers=header_login).json()
+    }, headers=header_login)
+    resp = response.json()
+    if response.status_code != 200:
+        raise Exception(f'获得认证代码失败：{resp}')
     if resp.get('status') != 0:
         raise Exception(f'获得认证代码失败：{resp["msg"]}')
     return resp['data']['code']
@@ -227,6 +230,7 @@ def do_init():
         if v:
             return v
     # 没有的话
+    token = ''
     print("请输入你需要做什么：")
     print("1.使用用户名密码登录（非常推荐，但可能因为人机验证失败）")
     print("2.使用手机验证码登录（非常推荐，但可能因为人机验证失败）")
@@ -239,20 +243,20 @@ def do_init():
     elif mode == '3':
         token = login_by_token()
     else:
-        exit()
+        exit(-1)
     save(token)
     return [token]
 
 
 def start():
-    try:
-        token = do_init()
-        for i in token:
+    token = do_init()
+    for i in token:
+        try:
             do_sign(get_cred_by_token(i))
-        print("签到完成！")
-    except Exception as ex:
-        print(f'签到失败，原因：{str(ex)}')
-        logging.error('', exc_info=ex)
+        except Exception as ex:
+            print(f'签到失败，原因：{str(ex)}')
+            logging.error('', exc_info=ex)
+    print("签到完成！")
 
 
 print('本项目源代码仓库：https://github.com/xxyz30/skyland-auto-sign(已被github官方封禁)')
