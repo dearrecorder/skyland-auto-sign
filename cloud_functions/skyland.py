@@ -86,7 +86,7 @@ def do_sign(cred):
     for i in characters:
         body = {
             'uid': i.get('uid'),
-            'gameId': i.get("channelMasterId")
+            'gameId': 1
         }
         resp = requests.post(sign_url, headers=copy_header(cred), json=body).json()
         if resp['code'] != 0:

@@ -9,7 +9,7 @@ from datetime import date
 
 token_save_name = 'TOKEN.txt'
 app_code = '4ca99fa6b56cc2ba'
-is_github_action = os.environ.get('GitHub_Actions')
+token_env = os.environ.get('HYPERGRYPH_TOKEN')
 header = {
     'cred': '',
     'User-Agent': 'Skland/1.0.1 (com.hypergryph.skland; build:100001014; Android 31; ) Okhttp/4.11.0',
@@ -49,9 +49,6 @@ def config_logger():
     file_handler.setLevel(logging.INFO)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     file_handler.setFormatter(formatter)
-
-    if is_github_action:
-        return
 
     def filter_code(text):
         filter_key = ['code', 'cred', 'token']
@@ -144,7 +141,7 @@ def get_cred(grant):
         'kind': 1
     }, headers=header_login).json()
     if resp['code'] != 0:
-        raise Exception(f'获得cred失败：{resp["messgae"]}')
+        raise Exception(f'获得cred失败：{resp["message"]}')
     return resp['data']['cred']
 
 
@@ -207,13 +204,9 @@ def read(path):
     return v
 
 
-def read_github_action():
-    tokens = os.environ.get('TOKEN')
-    if not tokens:
-        print('请在"secrets and variables"里添加Token!')
-        return []
+def read_from_env():
     v = []
-    token_list = tokens.split('\n')
+    token_list = token_env.split(',')
     for i in token_list:
         i = i.strip()
         if i and i not in v:
@@ -223,12 +216,11 @@ def read_github_action():
 
 
 def do_init():
-    if is_github_action:
-        print('使用Github Action')
+    if token_env:
+        print('使用环境变量里面的token')
         # 对于github action,不需要存储token,因为token在环境变量里
-        return read_github_action()
+        return read_from_env()
 
-    token = ''
     # 检测文件里是否有token
     if os.path.exists(token_save_name):
         v = read(token_save_name)
