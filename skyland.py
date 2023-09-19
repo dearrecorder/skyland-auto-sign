@@ -89,7 +89,6 @@ def config_logger():
 
     def post(*args, **kwargs):
         response = _post(*args, **kwargs)
-        print(kwargs['headers'])
         logger.info(f'POST {args[0]} - {response.status_code} - {filter_code(response.text)}')
         return response
 
