@@ -1,8 +1,12 @@
+import hashlib
+import hmac
 import json
 import os.path
 import time
 from getpass import getpass
 import logging
+from urllib import parse
+
 import requests
 
 from datetime import date
@@ -10,27 +14,28 @@ from datetime import date
 token_save_name = 'TOKEN.txt'
 app_code = '4ca99fa6b56cc2ba'
 token_env = os.environ.get('TOKEN')
+sign_token = ''
 header = {
     'cred': '',
     'User-Agent': 'Skland/1.0.1 (com.hypergryph.skland; build:100001014; Android 31; ) Okhttp/4.11.0',
     'Accept-Encoding': 'gzip',
-    'Connection': 'close',
-    # 老版本请求头，新版本要验参
-    "vName": "1.0.1",
-    "vCode": "100001014",
-    "dId": "de9759a5afaa634f",
-    "platform": "1"
+    'Connection': 'close'
 }
 header_login = {
     'User-Agent': 'Skland/1.0.1 (com.hypergryph.skland; build:100001014; Android 31; ) Okhttp/4.11.0',
     'Accept-Encoding': 'gzip',
-    'Connection': 'close',
-    # 老版本请求头，新版本要验参
-    "vName": "1.0.1",
-    "vCode": "100001014",
-    "dId": "de9759a5afaa634f",
-    "platform": "1"
+    'Connection': 'close'
 }
+
+# 签名请求头一定要这个顺序，否则失败
+# timestamp是必填的,其它三个随便填,不要为none即可
+header_for_sign = {
+    'platform': '',
+    'timestamp': '',
+    'dId': '',
+    'vName': ''
+}
+
 # 签到url
 sign_url = "https://zonai.skland.com/api/v1/game/attendance"
 # 绑定的角色url
@@ -84,12 +89,48 @@ def config_logger():
 
     def post(*args, **kwargs):
         response = _post(*args, **kwargs)
+        print(kwargs['headers'])
         logger.info(f'POST {args[0]} - {response.status_code} - {filter_code(response.text)}')
         return response
 
     # 替换 requests 中的方法
     requests.get = get
     requests.post = post
+
+
+def generate_signature(token: str, path, body_or_query):
+    """
+    获得签名头
+    接口地址+方法为Get请求？用query否则用body+时间戳+ 请求头的四个重要参数（dId，platform，timestamp，vName）.toJSON()
+    将此字符串做HMAC加密，算法为SHA-256，密钥token为请求cred接口会返回的一个token值
+    再将加密后的字符串做MD5即得到sign
+    :param token: 拿cred时候的token
+    :param path: 请求路径（不包括网址）
+    :param body_or_query: 如果是GET，则是它的query。POST则为它的body
+    :return: 计算完毕的sign
+    """
+    t = str(int(time.time()))
+    token = token.encode('utf-8')
+    header_ca = json.loads(json.dumps(header_for_sign))
+    header_ca['timestamp'] = t
+    header_ca_str = json.dumps(header_ca, separators=(',', ':'))
+    s = path + body_or_query + t + header_ca_str
+    hex_s = hmac.new(token, s.encode('utf-8'), hashlib.sha256).hexdigest()
+    md5 = hashlib.md5(hex_s.encode('utf-8')).hexdigest().encode('utf-8').decode('utf-8')
+    logging.info(f'算出签名: {md5}')
+    return md5, header_ca
+
+
+def get_sign_header(url: str, method, body, old_header):
+    h = json.loads(json.dumps(old_header))
+    p = parse.urlparse(url)
+    if method.lower() == 'get':
+        h['sign'], header_ca = generate_signature(sign_token, p.path, p.query)
+    else:
+        h['sign'], header_ca = generate_signature(sign_token, p.path, json.dumps(body))
+    for i in header_ca:
+        h[i] = header_ca[i]
+    return h
 
 
 def login_by_code():
@@ -155,12 +196,13 @@ def get_cred(grant):
     }, headers=header_login).json()
     if resp['code'] != 0:
         raise Exception(f'获得cred失败：{resp["message"]}')
-    return resp['data']['cred']
+    return resp['data']
 
 
 def get_binding_list():
     v = []
-    resp = requests.get(binding_url, headers=header).json()
+    resp = requests.get(binding_url, headers=get_sign_header(binding_url, 'get', None, header)).json()
+
     if resp['code'] != 0:
         print(f"请求角色列表出现问题：{resp['message']}")
         if resp.get('message') == '用户未登录':
@@ -179,17 +221,20 @@ def list_awards(game_id, uid):
     print(resp)
 
 
-def do_sign(cred):
-    header['cred'] = cred
+def do_sign(cred_resp):
+    # 加到全局里去吧，反正没有多线程
+    global sign_token
+    sign_token = cred_resp['token']
+    header['cred'] = cred_resp['cred']
     characters = get_binding_list()
 
     for i in characters:
         body = {
-            'uid': i.get('uid'),
-            'gameId': 1
+            'gameId': 1,
+            'uid': i.get('uid')
         }
         # list_awards(1, i.get('uid'))
-        resp = requests.post(sign_url, headers=header, json=body).json()
+        resp = requests.post(sign_url, headers=get_sign_header(sign_url, 'post', body, header), json=body).json()
         if resp['code'] != 0:
             print(f'角色{i.get("nickName")}({i.get("channelName")})签到失败了！原因：{resp.get("message")}')
             continue
@@ -269,14 +314,15 @@ def start():
     print("签到完成！")
 
 
-print('本项目源代码仓库：https://github.com/xxyz30/skyland-auto-sign(已被github官方封禁)')
-print('https://gitee.com/FancyCabbage/skyland-auto-sign')
-config_logger()
+if __name__ == '__main__':
+    print('本项目源代码仓库：https://github.com/xxyz30/skyland-auto-sign(已被github官方封禁)')
+    print('https://gitee.com/FancyCabbage/skyland-auto-sign')
+    config_logger()
 
-logging.info('=========starting==========')
+    logging.info('=========starting==========')
 
-start_time = time.time()
-start()
-end_time = time.time()
-logging.info(f'complete with {(end_time - start_time) * 1000} ms')
-logging.info('===========ending============')
+    start_time = time.time()
+    start()
+    end_time = time.time()
+    logging.info(f'complete with {(end_time - start_time) * 1000} ms')
+    logging.info('===========ending============')
