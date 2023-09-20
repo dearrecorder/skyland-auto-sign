@@ -56,7 +56,7 @@ def generate_signature(token: str, path, body_or_query):
     :param body_or_query: 如果是GET，则是它的query。POST则为它的body
     :return: 计算完毕的sign
     """
-    t = str(int(time.time()))
+    t = str(int(time.time()) - 2)
     token = token.encode('utf-8')
     header_ca = json.loads(json.dumps(header_for_sign))
     header_ca['timestamp'] = t
