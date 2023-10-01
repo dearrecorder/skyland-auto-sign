@@ -16,13 +16,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests
-      - name: 通知
-        uses: easychen/github-action-server-chan@v1.0.0
-        with:
-          sendkey: ${{ secrets.sendkey }}
-          title: "森空岛签到成功！"
-          desp: "森空岛签到成功！"          
+          pip install requests       
       - name: Run skyland.py
         env:
           GitHub_Actions: true
@@ -32,3 +26,9 @@ jobs:
           TOKEN: ${{ secrets.TOKEN }}
         run: |
           python skyland.py
+      - name:  ServerChan
+        uses: easychen/github-action-server-chan@v1.0.0
+        with:
+          sendkey: ${{ secrets.sendkey }}
+          title: "森空岛签到"
+          desp: "森空岛签到"   
